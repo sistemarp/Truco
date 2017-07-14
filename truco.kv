@@ -1,0 +1,221 @@
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import StringProperty kivy.properties.StringProperty
+#: import Image kivy.core.image
+
+TelaTransicao:
+    transition: FadeTransition()
+	TelaLogin:
+	TelaLoby:
+	MesaTruco:
+    TelaCadastro:
+    TelaConfig:
+
+<TelaLogin>:
+	pos_hint: {'center_x':.5}
+	name: 'login'
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: '01.png'
+
+	FloatLayout:
+        size: (10, 30)
+
+        Image:
+            source: '02.png'
+            size_hint: .7, .35
+            pos_hint:{'x':.25, 'y':.6} 
+
+        Label:
+            text: root.resp
+            color: 0,100,45,3
+            size_hint: .225, .1
+            pos_hint:{'x':.3, 'y':.49}
+
+        Label:
+            text: 'Usuario:'
+            bold: True
+            size_hint: .1, .1
+            pos_hint:{'x':.1, 'y':.4}
+        TextInput:
+            id: usr
+            text: 'admin'
+            size_hint: .6, .11
+            pos_hint:{'x':.3, 'y':.4}
+
+        Label:
+            text: 'Senha:'
+            bold: True
+            size_hint: .1, .1
+            pos_hint:{'x':.1, 'y':.3}
+        TextInput:
+            id: senha
+            text: 'admin'
+            size_hint: .6, .1
+            pos_hint:{'x':.3, 'y':.3}
+            password: True
+
+        Button:
+            text:'Logar'
+            size_hint: .3, .15
+            pos_hint:{'x':.3, 'y':.12}
+            on_press: root.login(usr, senha)
+
+        Button:
+            text:'Sair'
+            size_hint: .3, .15
+            pos_hint:{'x':.6, 'y':.12}
+
+        Button:
+            text: 'Cadastrar'
+            size_hint: .6, .1
+            pos_hint:{'x':.3, 'y':.01}
+            on_press: root.telas('cadastro')
+
+
+
+
+<TelaLoby>:
+	name: 'loby'
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: '01.png'
+
+    FloatLayout:
+
+        Label:
+            id: benvindo
+            text: 'Seja bem vindo ' + root.label_text
+            size_hint: .1, .3
+            pos_hint: {'x':.1, 'y':.1}
+
+        Button:
+            id: cfg
+            size_hint: .06, .09
+            pos_hint: {'x':.93, 'y':.9}
+            background_color: 0,0,0,0
+            on_press: root.buttonpress('bt1')
+            Image:
+                source: root.bt1
+                width: 25
+                center_x: self.parent.center_x
+                center_y: self.parent.center_y
+
+        Button:
+            id: table
+            size_hint: .22, .15
+            pos_hint: {'x':.01, 'y':.03}
+            background_color: 0,0,0,0
+            on_press: root.buttonpress('bt2')
+            Image:
+                source: root.bt2
+                width: 100
+                center_x: self.parent.center_x
+                center_y: self.parent.center_y
+
+
+
+<MesaTruco>:
+    name: 'mesa'
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: '01.png'
+
+    FloatLayout:
+
+        Label:
+            text: 'Mesa Truco'
+
+        Button:
+            id: back
+            text: 'voltar'
+            size_hint: .2 , .1
+            pos_hint:{'x':.01, 'y':.01}
+            on_release: app.root.current = 'loby'
+
+<TelaCadastro>:
+    name: 'cadastro'
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: '01.png'
+
+    FloatLayout:
+        Label:
+            id: info
+            text: root.inf
+            size_hint: .1, .1
+            pos_hint:{'x':.36, 'y':.59}
+            color: 171,22,22,3
+
+        Label:
+            text: 'user:'
+            bold: True
+            size_hint: .1, .1
+            pos_hint:{'x':.1, 'y':.5}
+        TextInput:
+            id: user
+            text: 'Padovani'
+            size_hint: .6, .1
+            pos_hint:{'x':.3, 'y':.5}
+
+        Label:
+            text: 'senha:'
+            bold: True
+            size_hint: .1, .1
+            pos_hint:{'x':.1, 'y':.3}
+        TextInput:
+            id: passw
+            text: 'Delete1994'
+            size_hint: .6, .1
+            pos_hint:{'x':.3, 'y':.3}
+            password: True
+
+        Label:
+            text: 'email:'
+            bold: True
+            size_hint: .1, .1
+            pos_hint:{'x':.1, 'y':.4}
+        TextInput:
+            id: email
+            text: 'andersonpadovani@protonmail.com'
+            size_hint: .6, .1
+            pos_hint:{'x':.3, 'y':.4}
+
+        Button:
+            text:'Cadastrar'
+            size_hint: .3, .15
+            pos_hint:{'x':.3, 'y':.12}
+            on_press: root.criaUsuario(user, passw, email)
+
+
+<TelaConfig>:
+    name: 'config'
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: '01.png'
+
+    FloatLayout:
+        Label:
+            text: 'Tela Confifgurações'
+
+        Button:
+            id: back
+            text: 'voltar'
+            size_hint: .1 , .1
+            pos: 10, 20
+            on_press: root.volta()
+

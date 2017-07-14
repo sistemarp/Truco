@@ -105,32 +105,3 @@ class truco(App):
 
 if __name__ == "__main__":
 	truco().run()
-
-
-
-'''
-
-	GridLayout:
-		cols: 2
-
-		Label:
-            pos_hint:{'x':.4 'y':.1}
-			text: 'usuario'
-		TextInput:
-			id: user
-			text: 'admin'
-
-		Label:
-			text: 'Senha'
-		TextInput:
-			id: senha
-			text: 'admin'
-			password: True
-
-        Button:
-            text: 'Conectar'
-            on_press: root.login(user, senha)
-
-        Button:
-            text: 'Sair'
-'''

@@ -1,3 +1,4 @@
+# -*- coding: cp1252 -*-
 import md5, random, MySQLdb
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
@@ -15,6 +16,11 @@ from kivy.uix.widget import Widget
 
 #Window.size = (450, 250)
 
+class Conexao(object):
+        def bancoDados(self):
+                cliente = MySQLdb.connect(host='localhost', user='usr', passwd='admin', db='truco')
+                return cliente.cursor()
+
 class TelaTransicao(ScreenManager):
 	pass
 
@@ -22,15 +28,13 @@ class TelaLogin(Screen):
 	resp = StringProperty()
 
 	def login(self, nome, senha):
-		cliente = MySQLdb.connect(host='localhost', user='root', passwd='toor', db='Truco')
-		cursor = cliente.cursor()
 
-		var = "SELECT * FROM T_Usuarios WHERE nome = '%s' and senha = '%s';"%(nome.text, md5.md5(senha.text).hexdigest())
+		var = "SELECT * FROM t_usuarios WHERE nome = '%s' and senha = '%s';"%(nome.text, md5.md5(senha.text.encode('utf-8')).hexdigest())
 
-		if cursor.execute(var):
+		if Conexao().bancoDados().execute(var):
 			self.manager.get_screen('loby').label_text = nome.text
 			self.manager.current = 'loby'
-			cliente.close()
+			Conexao().bancoDados().close()
 		else:
 			self.resp = 'Usuario ou senha invalido!'
 
@@ -66,13 +70,13 @@ class TelaCadastro(Screen):
 	inf = StringProperty('')
 	def criaUsuario(self, no, se, email):
 		if no.text == '':
-			self.inf = 'Capo User Obrigatorio!'
+			self.inf = 'Capo User Obrigatório!'
 		elif se.text == '':
-			self.inf = 'Capo Senha Obrigatorio!'
+			self.inf = 'Capo Senha Obrigatório!'
 		elif email.text == '':
-			self.inf = 'Capo Email Obrigatorio'
+			self.inf = 'Capo Email Obrigatório'
 
-		if self.insert(no.text, md5.md5(se.text).hexdigest(), email.text):
+		if self.insert(no.text, md5.md5(se.text.encode('utf-8')).hexdigest(), email.text):
 			self.manager.current = 'login'
 
 		self.inf = 'Usuario ja cadastrado!'
@@ -80,18 +84,14 @@ class TelaCadastro(Screen):
 
 	def insert(self, name, passw, email):
 
-		cliente = MySQLdb.connect(host='localhost', user='root', passwd='toor', db='Truco')
-
-		r = "INSERT INTO T_Usuarios(nome, senha, email) VALUES('%s', '%s', '%s')"%(name, passw, email)
+		cadastro = "INSERT INTO t_usuarios(nome, senha, email) VALUES('%s', '%s', '%s')"%(name, passw, email)
 		try:
-			cursor = cliente.cursor()
-			cursor.execute(r)
-			cliente.commit()
-			cliente.close()
+			Conexao().bancoDados().execute(cadastro)
+			Conexao().bancoDados().close()
 			return True
 		except Exception as e:
 			print(e)
-			cliente.rollback()
+			Conexao().bancoDados().rollback()
 
 class MesaTruco(Screen):
 	pass

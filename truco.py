@@ -15,23 +15,6 @@ from kivy.uix.widget import Widget
 
 #Window.size = (450, 250)
 
-class BancoDados(object):
-	def insert(self, name, passw, email):
-
-		cliente = MySQLdb.connect(host='localhost', user='root', passwd='toor', db='Truco')
-
-		r = "INSERT INTO T_Usuarios(nome, senha, email) VALUES('%s', '%s', '%s')"%(name, passw, email)
-		try:
-			cursor = cliente.cursor()
-			cursor.execute(r)
-			cliente.commit()
-			cliente.close()
-			return True
-		except Exception as e:
-			print(e)
-			cliente.rollback()
-
-
 class TelaTransicao(ScreenManager):
 	pass
 
@@ -89,10 +72,26 @@ class TelaCadastro(Screen):
 		elif email.text == '':
 			self.inf = 'Capo Email Obrigatorio'
 
-		if BancoDados().insert(no.text, md5.md5(se.text).hexdigest(), email.text):
+		if self.insert(no.text, md5.md5(se.text).hexdigest(), email.text):
 			self.manager.current = 'login'
 
 		self.inf = 'Usuario ja cadastrado!'
+
+
+	def insert(self, name, passw, email):
+
+		cliente = MySQLdb.connect(host='localhost', user='root', passwd='toor', db='Truco')
+
+		r = "INSERT INTO T_Usuarios(nome, senha, email) VALUES('%s', '%s', '%s')"%(name, passw, email)
+		try:
+			cursor = cliente.cursor()
+			cursor.execute(r)
+			cliente.commit()
+			cliente.close()
+			return True
+		except Exception as e:
+			print(e)
+			cliente.rollback()
 
 class MesaTruco(Screen):
 	pass

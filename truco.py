@@ -1,4 +1,3 @@
-# -*- coding: cp1252 -*-
 import md5, random, MySQLdb
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
@@ -16,10 +15,19 @@ from kivy.uix.widget import Widget
 
 #Window.size = (450, 250)
 
-class Conexao(object):
-        def bancoDados(self):
-                cliente = MySQLdb.connect(host='localhost', user='usr', passwd='admin', db='truco')
-                return cliente.cursor()
+class BancoDados(object):
+	def bancoDB(self, var):
+		try:
+			banco = MySQLdb.connect(host='localhost', user='root', passwd='toor', db='Truco')
+			cursor = banco.cursor()
+			cursor.execute(var)
+			banco.commit()
+			banco.close()
+			return cursor
+		except Exception as e:
+			return str(e)
+
+
 
 class TelaTransicao(ScreenManager):
 	pass
@@ -28,13 +36,13 @@ class TelaLogin(Screen):
 	resp = StringProperty()
 
 	def login(self, nome, senha):
+		conecta = "SELECT * FROM T_Usuarios WHERE nome = '%s' and senha = '%s';"%(nome, md5.md5(senha).hexdigest())
+		grava = BancoDados().bancoDB(conecta)
 
-		var = "SELECT * FROM t_usuarios WHERE nome = '%s' and senha = '%s';"%(nome.text, md5.md5(senha.text.encode('utf-8')).hexdigest())
-
-		if Conexao().bancoDados().execute(var):
-			self.manager.get_screen('loby').label_text = nome.text
+		if grava.fetchall() != ():
+			self.manager.get_screen('loby').label_text = nome
 			self.manager.current = 'loby'
-			Conexao().bancoDados().close()
+
 		else:
 			self.resp = 'Usuario ou senha invalido!'
 
@@ -43,7 +51,7 @@ class TelaLogin(Screen):
 			self.manager.current = tipo
 
 		elif tipo == 'sair':
-			exit()
+			truco().on_stop()
 
 class TelaConfig(Screen):
 
@@ -68,30 +76,34 @@ class TelaLoby(Screen):
 class TelaCadastro(Screen):
 
 	inf = StringProperty('')
-	def criaUsuario(self, no, se, email):
-		if no.text == '':
-			self.inf = 'Capo User Obrigatório!'
-		elif se.text == '':
-			self.inf = 'Capo Senha Obrigatório!'
-		elif email.text == '':
-			self.inf = 'Capo Email Obrigatório'
+	def criaUsuario(self, no, se, em):
+		if no == '':
+			self.inf = 'Capo User Obrigatorio!'
+		elif se == '':
+			self.inf = 'Capo Senha Obrigatorio!'
+		elif em == '':
+			self.inf = 'Capo Email Obrigatorio'
+		elif '@' and '.' not in em:
+			self.inf = 'Email invalido!'
+		else:
+			self.cadastra(no, se, em)
 
-		if self.insert(no.text, md5.md5(se.text.encode('utf-8')).hexdigest(), email.text):
-			self.manager.current = 'login'
+	def cadastra(self, name, password, email):
 
-		self.inf = 'Usuario ja cadastrado!'
+		self.nome = name
+		self.senha =  md5.md5(password).hexdigest()
+		self.ema = email
 
+		conecta = "INSERT INTO T_Usuarios(nome, senha, email) VALUES('%s', '%s', '%s')"%(self.nome, self.senha, self.ema)
+		grava = BancoDados().bancoDB(conecta)
 
-	def insert(self, name, passw, email):
+		if grava:
+			if 'Duplicate entry' in grava:
+				usr = grava.split(' ')[3]
+				self.inf = 'Usuario %s ja cadastrado!'%usr
 
-		cadastro = "INSERT INTO t_usuarios(nome, senha, email) VALUES('%s', '%s', '%s')"%(name, passw, email)
-		try:
-			Conexao().bancoDados().execute(cadastro)
-			Conexao().bancoDados().close()
-			return True
-		except Exception as e:
-			print(e)
-			Conexao().bancoDados().rollback()
+			else:
+				self.manager.current = 'login'
 
 class MesaTruco(Screen):
 	pass
@@ -102,6 +114,9 @@ documentoKV = Builder.load_file("truco.kv")
 class truco(App):
 	def build(self):
 		return documentoKV
+
+	#def on_stop(self):
+	#	return True
 
 if __name__ == "__main__":
 	truco().run()

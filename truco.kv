@@ -61,12 +61,13 @@ TelaTransicao:
             text:'Logar'
             size_hint: .3, .15
             pos_hint:{'x':.3, 'y':.12}
-            on_press: root.login(usr, senha)
+            on_press: root.login(usr.text, senha.text)
 
         Button:
             text:'Sair'
             size_hint: .3, .15
             pos_hint:{'x':.6, 'y':.12}
+            on_press: root.telas('sair')
 
         Button:
             text: 'Cadastrar'
@@ -117,6 +118,12 @@ TelaTransicao:
                 width: 100
                 center_x: self.parent.center_x
                 center_y: self.parent.center_y
+        Button:
+            id: sair
+            text: 'Sair'
+            size_hint: .08, .1
+            pos_hint: {'x':.3, 'y':.05}
+            on_release: app.root.current = 'login'
 
 
 
@@ -154,8 +161,8 @@ TelaTransicao:
         Label:
             id: info
             text: root.inf
-            size_hint: .1, .1
-            pos_hint:{'x':.36, 'y':.59}
+            size_hint: .01, .1
+            pos_hint:{'x':.6, 'y':.59}
             color: 171,22,22,3
 
         Label:
@@ -196,7 +203,12 @@ TelaTransicao:
             text:'Cadastrar'
             size_hint: .3, .15
             pos_hint:{'x':.3, 'y':.12}
-            on_press: root.criaUsuario(user, passw, email)
+            on_press: root.criaUsuario(user.text, passw.text, email.text)
+        Button:
+            text: 'Ja sou cacdastrado'
+            size_hint: .3, .15
+            pos_hint:{'x':.6, 'y':.12}
+            on_release: app.root.current = 'login'
 
 
 <TelaConfig>:
